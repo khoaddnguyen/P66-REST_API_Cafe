@@ -46,7 +46,7 @@ def home():
 
 
 @app.route("/random", methods=["GET", "POST"])
-def get_random():
+def get_random_cafes():
     result = db.session.execute(db.select(Cafe))
     all_cafes = result.scalars().all()
     random_cafe = random.choice(all_cafes)
@@ -56,10 +56,21 @@ def get_random():
 ## HTTP GET - Read Record
 
 @app.route("/all", methods=["GET", "POST"])
-def get_all():
+def get_all_cafes():
     result = db.session.execute(db.select(Cafe).order_by(Cafe.name))
     all_cafes = result.scalars().all()
     return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes])
+
+
+@app.route("/search", methods=["GET", "POST"])
+def search_cafe():
+    query_location = request.args.get("loc")
+    result = db.session.execute(db.select(Cafe).where(Cafe.location == query_location))
+    all_cafes = result.scalars().all()
+    if all_cafes:
+        return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes])
+    else:
+        return jsonify(error={"Not Found": "Sorry, we do not have a cafe at that location."}), 404
 
 ## HTTP POST - Create Record
 
