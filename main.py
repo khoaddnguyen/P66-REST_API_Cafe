@@ -55,6 +55,12 @@ def get_random():
 
 ## HTTP GET - Read Record
 
+@app.route("/all", methods=["GET", "POST"])
+def get_all():
+    result = db.session.execute(db.select(Cafe).order_by(Cafe.name))
+    all_cafes = result.scalars().all()
+    return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes])
+
 ## HTTP POST - Create Record
 
 ## HTTP PUT/PATCH - Update Record
