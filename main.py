@@ -33,7 +33,7 @@ class Cafe(db.Model):
         # return dictionary
 
         # or use dictionary comprehension
-        return {column.name: getattr(self, column.name) for column in self.__table__.column}
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
 
 with app.app_context():
@@ -47,11 +47,10 @@ def home():
 
 @app.route("/random", methods=["GET", "POST"])
 def get_random():
-    def get_random_cafe():
-        result = db.session.execute(db.select(Cafe))
-        all_cafes = result.scalars().all()
-        random_cafe = random.choice(all_cafes)
-        return jsonify(cafe=random_cafe.to_dict())
+    result = db.session.execute(db.select(Cafe))
+    all_cafes = result.scalars().all()
+    random_cafe = random.choice(all_cafes)
+    return jsonify(cafe=random_cafe.to_dict())
     
 
 ## HTTP GET - Read Record
